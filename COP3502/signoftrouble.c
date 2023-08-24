@@ -6,9 +6,11 @@
 
 void calculateFreq(const char* signName, int* frequencyArray){
 
-        for (size_t i = 0; signName[i] != '\0'; i++) {
-                
+        for (size_t i = 0; signName[i] != '\n'; i++) {
+            if(signName[i] == ' ') continue;
+
             frequencyArray[signName[i] - 'A']++;
+            printf("The letter %c has shown up %d  times\n", signName[i],frequencyArray[signName[i] - 'A']);
 
         }
 
@@ -34,8 +36,9 @@ int main(){
 
     for(int i = 0; i <26; i++){
 
-        if(frequencyNewArray > frequencyOldArray){
-            count += (frequencyNewArray-frequencyOldArray);
+        if(frequencyNewArray[i] > frequencyOldArray[i]){
+            int diff = frequencyNewArray[i]-frequencyOldArray[i];
+            count += diff;
         }
 
     }
