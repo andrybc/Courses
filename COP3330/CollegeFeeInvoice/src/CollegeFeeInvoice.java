@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 public class CollegeFeeInvoice {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		//creating scanner instance and prompting user for information
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Welcome student, please fill out the information below?");
 		
@@ -17,6 +17,7 @@ public class CollegeFeeInvoice {
 		String studentName = scan.nextLine();
 		//System.out.println();
 		
+		//creating an array to store the two crn/credithour
 		String[] classes = new String[2];
 		
 		for(int i = 0; i < classes.length; i++) {
@@ -25,7 +26,7 @@ public class CollegeFeeInvoice {
 			//System.out.println();
 
 		}
-		
+		//printing out first part of ticket with student name and ID
 		System.out.println("Your invoice is below");
 		System.out.println("============================");
 		System.out.println();
@@ -39,8 +40,10 @@ public class CollegeFeeInvoice {
 		System.out.println();
 		System.out.println("CRN            CREDIT HOURS");
 		
+		//initializing sum variable and preparing the decimal format
 		double sum = 35.00;
 		DecimalFormat df = new DecimalFormat("0.00");
+		//looping through the classes array to split crn and credithour at the "/"
 		for(int i = 0; i < classes.length; i++) {
 			String crn_credit[];
 			
@@ -48,18 +51,19 @@ public class CollegeFeeInvoice {
 			int creditHours;
 			crn_credit = classes[i].split("/");
 			
-			crn = Integer.parseInt(crn_credit[0]);
+			crn = Integer.parseInt(crn_credit[0]);//didnt really have to do this since I am not doing math with the crn
 			creditHours = Integer.parseInt(crn_credit[1]);  
 			
 			double coursePrice = creditHours * 120.25;
 			sum+= coursePrice;
+			//printing out the crn, creditHour, and pricePrices
 			System.out.println(crn +"           "+ creditHours + "                        " + "$" +df.format(coursePrice));
 			
 		}
 		
 		
 		
-		
+		//printing out the rest of the invoice including the sum
 		System.out.println("               Health & id fees"+ "         $35.00");
 		System.out.println();
 		System.out.println("----------------------------------------------------");
