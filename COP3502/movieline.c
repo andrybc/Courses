@@ -31,6 +31,14 @@ typedef struct CustomerQueue {
     int size;
 } CustomerQueue;
 
+typedef struct Booth {
+    //CustomerQueue* line;
+    int lastCheckoutTime;
+    int numQueues;
+    int* queueNumbers;
+    int numOfCustomers;
+} Booth;
+
 
 //function that dynamically allocates memory and intitializes a new customer and returns it
 customer* createCustomer(char* newName, int newNumTickets, int newLineNumber, int newArrivalTime) {
@@ -100,6 +108,120 @@ int isEmpty(CustomerQueue* queue) {
 int size(CustomerQueue* queue) {
     return queue->size;
 }
+
+
+Booth* assignQueuesToBooths(CustomerQueue* movieQueues[], int numBooths, int numQueues) {
+    Booth* booths = (Booth*) malloc(numBooths * sizeof(Booth));
+    int queuesPerBooth = numQueues / numBooths;
+  //  printf("queues per booth is %d\n", queuesPerBooth);
+    int extraQueues = numQueues % numBooths;
+  //  printf("with %d remaining\n", extraQueues);
+
+    int queueIndex = 0;
+    int numofCustomers = 0;
+    
+    for(int i = 0; i < numBooths; i++) {
+        booths[i].lastCheckoutTime = 0;
+        booths[i].numQueues = queuesPerBooth + (i < extraQueues ? 1 : 0);
+       // printf("Booth #%d will have %d queues\n", i+1, booths[i].numQueues);
+      //  printf("Which will be: ");
+         numofCustomers = 0;
+        booths[i].queueNumbers = (int*) malloc(booths[i].numQueues * sizeof(int));
+
+        for(int j = 0; j < booths[i].numQueues; j++) {
+            //printf("im in the loop %d time\n", j+1);
+            if (!isEmpty(movieQueues[queueIndex])) { // Check if queue is not empty
+                
+               //booths[i].queues[j] = movieQueues[queueIndex];
+               numofCustomers+= size(movieQueues[queueIndex]);
+                booths[i].queueNumbers[j] = queueIndex; // Store queue number
+              // printf("non empty queue is queue #%d, ", queueIndex+1);
+
+            } else {
+            
+                //skip assigning this queue to the booth 
+                j--;
+            }
+            queueIndex++;
+        }
+        booths[i].numOfCustomers = numofCustomers;
+        printf("Booth %d has %d customers in it\n", i+1, numofCustomers);
+
+
+
+
+    }
+
+
+
+    return booths;
+}
+
+void printBoothQueues(Booth* booths, int numBooths) {
+    for (int i = 0; i < numBooths; i++) {
+        printf("Booth %d: ", i + 1);
+        for (int j = 0; j < booths[i].numQueues; j++) {
+            printf("Queue %d", booths[i].queueNumbers[j]+1);
+            if (j < booths[i].numQueues - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+void processCustomers(Booth* booths, int numBooths, customer* customerLine[], int numCustomers) {
+    for (int k = 0; k < numCustomers; k++) {
+        customer* cust = customerLine[k];
+        int lineNumber = cust->lineNumber; // Get the lineNumber of the customer
+        int boothIndex = -1; // Initialize boothIndex to an invalid value
+
+        // Find the booth in booths that is handling the queue with the given lineNumber
+        for (int i = 0; i < numBooths; i++) {
+            for (int j = 0; j < booths[i].numQueues; j++) {
+                if (booths[i].queueNumbers[j] == lineNumber) {
+                    boothIndex = i;
+                    break;
+                }
+            }
+            if (boothIndex != -1) {
+                break;
+            }
+        }
+
+        if (boothIndex != -1) {
+            // Found the booth, process the customer
+            int processingTime = 30 + cust->numTickets * 5;
+            if (cust->arrivalTime < booths[boothIndex].lastCheckoutTime) {
+                booths[boothIndex].lastCheckoutTime = cust->arrivalTime;
+            }
+            booths[boothIndex].lastCheckoutTime += processingTime;
+            printf("%s from line %d checks out %d at time %d.\n",
+                   cust->name, lineNumber + 1, boothIndex + 1,
+                   booths[boothIndex].lastCheckoutTime);
+            free(cust);
+        } else {
+            // Error: Customer's queue not found in any booth
+            printf("Error: Customer's queue not found in any booth.\n");
+        }
+    }
+}
+
+
+void freeBooths(Booth* booths, int numBooths) {
+    for (int i = 0; i < numBooths; i++) {
+        for (int j = 0; j < booths[i].numQueues; j++) {
+            if (booths[i].queues[j] != NULL) {
+                free(booths[i].queues[j]); // Free the dynamically allocated queue
+            }
+        }
+        if (booths[i].queueNumbers != NULL) {
+            free(booths[i].queueNumbers); // Free the dynamically allocated queueNumbers array
+        }
+    }
+    free(booths); // Free the dynamically allocated array of booths
+}
+
 
 //function that finds the first queue that has the least amount of customers but at least had size 1
 int findSmallestQueue (CustomerQueue* queues[]){
@@ -172,9 +294,12 @@ int main(){
 
 
     int numCustomers, numBooths;
+   
 
 
     scanf("%d %d", &numCustomers, &numBooths);
+
+    customer* customerLine[numCustomers];
 
     for(int i = 0; i < numCustomers; i++){
 
@@ -198,11 +323,33 @@ int main(){
         customer* newCustomer = createCustomer(name, numTickets, queueNum, arrivalTime);//create the new customer
 
         enqueue(movieQueues[queueNum], newCustomer); //then add them to the correct queue
+        customerLine[i] = newCustomer;
+
 
 
     }
 
     printAllQueues(movieQueues);
+     int numQueues = 0;
+        for(int i = 0; i < 12; i++) {
+            if(!isEmpty(movieQueues[i])){
+                numQueues++;
+            }
+           
+       
+        }
+        printf("%d\n", numQueues);
+
+    Booth* booths = assignQueuesToBooths(movieQueues, numBooths, numQueues);
+    printBoothQueues(booths,numBooths);
+
+    processCustomers(booths, numBooths, numCustomers, customerLine);
+
+
+
+
+    //freeBooths(booths, numBooths);
+
 
 
 
