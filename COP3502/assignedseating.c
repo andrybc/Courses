@@ -1,3 +1,10 @@
+/*
+Andry Canel
+Assigned Seating
+09/12/2023
+*/
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,69 +27,50 @@ typedef struct theaterrow {
  int cur_size;
 } theaterrow;
 
-// Returns a pointer to a dynamically allocated order storing the given
-// start row, end row, and the name this_name. Note: strcpy should be
-// used to copy the contents into the struct after its name field is
-// dynamically allocated.
-order* make_order(int start, int end, char* this_name);
+
 
 order* make_order(int start, int end, char* this_name){
-    order* newOrder = (order*)malloc(sizeof(order));
+    order* newOrder = (order*)malloc(sizeof(order));//dynamically allocating an order
     newOrder->s_seat = start;
     newOrder->e_seat = end;
-    newOrder->name = (char*)malloc(MAXLEN*sizeof(char));
+    newOrder->name = (char*)malloc(MAXLEN*sizeof(char));//dynamically allocating the for the name size
     strcpy(newOrder->name, this_name);
     return newOrder;
 }
 
-// This function will allocate the memory for one theaterrow, including
-// allocating its array of orders to a default maximum size of 10, and
-// setting its current size to 0.
-theaterrow* make_empty_row();
+
 theaterrow* make_empty_row(){
-    theaterrow* mtRow = (theaterrow*) malloc(sizeof(theaterrow));
-    mtRow->list_orders = (order**) malloc(INITSIZE * sizeof(order*));
+    theaterrow* mtRow = (theaterrow*) malloc(sizeof(theaterrow));//dynamically allocating an empty row when BUY command is called
+    mtRow->list_orders = (order**) malloc(INITSIZE*sizeof(order*));
     mtRow->max_size = INITSIZE;
     mtRow->cur_size = 0;
     return mtRow;
 }
 
-// Assuming that order1 and order2 point to orders on the same row, this
-// function returns 1 if the orders conflict, meaning that they share
-// at least 1 seat in common, and returns 0 otherwise.
 
-int conflict(order* order1, order* order2);
+//checking to see if order1 is in order2 or vice versa
 int conflict(order* order1, order* order2){
     if(order1->s_seat > order2->e_seat || order2->s_seat > order1->e_seat){
-        printf("There is no conflict\n");
+       // printf("There is no conflict\n");
         return 0;
     }
     else{
         return 1;
     }
 }
-// Returns 1 if the order pointed to by this_order can be added to the
-// row pointed to by this_row. Namely, 1 is returned if and only if
-// this_order does NOT have any seats in it that are part of any order
-// already on this_row.
-int can_add_order(theaterrow* this_row, order* this_order);
+
+//using conflict function to check to see if the order in this row is conflicting with any other previous orders
 int can_add_order(theaterrow* this_row, order* this_order){
-    printf("This row current size is %d\n",this_row->cur_size );
+  //  printf("This row current size is %d\n",this_row->cur_size );
     for(int i = 0; i < this_row->cur_size; i++){
-       printf("IN THE CAN ADD ORDER FOR LOOP\n" );
+      // printf("IN THE CAN ADD ORDER FOR LOOP\n" );
         if(conflict(this_order, this_row->list_orders[i]) == 1){
             return 0;  
         }
     }
     return 1; 
 }
-// This function tries to add this_order to this_row. If successful,
-// the order is added and 1 is returned. Otherwise, 0 is returned and
-// no change is made to this_row. If the memory for this_row is full,
-// this function will double the maximum # of orders allocated for the
-// row (via realloc), before adding this_order, and adjust max_size and
-// cur_size of this_row.
-void add_order(theaterrow* this_row, order* this_order);
+//after can_add_order returns a 1 call this function that dynamically allocates  an order( or reallocate depending on the current siz) in list orders
 void add_order(theaterrow* this_row, order* this_order){
     if(this_row->cur_size == this_row->max_size){
         this_row->max_size *= 2;
@@ -93,9 +81,7 @@ void add_order(theaterrow* this_row, order* this_order){
     this_row->cur_size++;
 }
 
-// If seat_num seat number in row number row is occupied, return a
-// pointer to the owner’s name. Otherwise, return NULL.
-char* get_owner(theaterrow** theater, int row, int seat_num);
+//returns the string name who occupies that particular seat given the theatre 2D array, seat number, and row
 char* get_owner(theaterrow** theater, int row, int seat_num){
     theaterrow* this_row = theater[row];
     for(int i = 0; i < this_row->cur_size; i++){
@@ -106,10 +92,7 @@ char* get_owner(theaterrow** theater, int row, int seat_num){
     }
     return NULL;
 }
-// If seat_num in the row pointed to by this_row is occupied, return a
-// pointer to the string storing the owner’s name. If no one is sitting
-// in this seat, return NULL.
-char* get_row_owner(theaterrow* this_row, int seat_num);
+//returns the string name who occupies that particular seat given the seat number and row
 char* get_row_owner(theaterrow* this_row, int seat_num){
     for(int i = 0; i < this_row->cur_size; i++){
         order* this_order = this_row->list_orders[i];
@@ -120,43 +103,41 @@ char* get_row_owner(theaterrow* this_row, int seat_num){
     return NULL;
 }
 
-// This function returns 1 if the seat number seat_no is contained in
-// the range of seats pointed to by myorder, and returns 0 otherwise.
-int contains(order* myorder, int seat_no);
+
 int contains(order* myorder, int seat_no){
     if(myorder->s_seat <= seat_no && myorder->e_seat >= seat_no){
         return 1;
     }
     return 0;
 }
-// Frees all memory associated with this_order.
-void free_order(order* this_order);
+
+// frees the memory allocated for one order...by freeding the dynamically allocated name first then the order
 void free_order(order* this_order){
-    free(this_order->name);  // Free the memory allocated for the name
-    free(this_order);  // Free the memory allocated for the order struct
+    free(this_order->name);  
+    free(this_order);  
 }
-// Frees all memory associated with this_row.
-void free_row(theaterrow* this_row);
+// recursivley frees the memory allocated for the row in a theatre...by freeing the dynamically allocated for the orders array  with the free_order function and then the row
+
 void free_row(theaterrow* this_row){
     for(int i = 0; i < this_row->cur_size; i++){
-        free_order(this_row->list_orders[i]);  // Free each order in the row
+        free_order(this_row->list_orders[i]);  
     }
-    free(this_row->list_orders);  // Free the memory allocated for the list of orders
-    free(this_row);  // Free the memory allocated for the row struct
+    free(this_row->list_orders);  
+    free(this_row);  
 }
 
 
 int main(void){
     theaterrow** myTheater = calloc(MAXROWS+1, sizeof(theaterrow*));
 
-    char command[10];
+    char command[10];//array for to hold "BUY", "LOOKUP", "QUIT"
 
-    while(scanf("%s", command)){
+    while(scanf("%s", command)){//continue scanning in all the strings on each input
 
-        if(strcmp(command, "QUIT")==0) break;
+        if(strcmp(command, "QUIT")==0) break;//break out when string equal "QUIT"
 
 
-        if(strcmp(command, "BUY") == 0){
+        if(strcmp(command, "BUY") == 0){//if string equal BUY check to see if seat is occupied through the previous orders
             int row, start, end;
             char name[MAXLEN];
             scanf("%d %d %d %s", &row, &start, &end, name);
@@ -167,7 +148,7 @@ int main(void){
                 myTheater[row] = make_empty_row();
             }
             if(can_add_order(myTheater[row], new_order)==1){
-                printf("can add order\n");
+               // printf("can add order\n");
                 add_order(myTheater[row], new_order);
                 printf("SUCCESS\n");
             }
@@ -176,7 +157,7 @@ int main(void){
                 free_order(new_order);  
             }
         }
-        else if(strcmp(command, "LOOKUP") == 0){
+        else if(strcmp(command, "LOOKUP") == 0){//looks up who is in a row/seat
             int row, seat;
             scanf("%d %d", &row, &seat);
             if(myTheater[row] == NULL){
@@ -195,12 +176,13 @@ int main(void){
 
         }
     }
-
+//sucessfully recursively frees all memory that was dynamically allocated
     for(int i = 0; i < MAXROWS+1; i++){
         if(myTheater[i] != NULL){
             free_row(myTheater[i]);
         }
     }
+
     free(myTheater);
 
     return 0;
