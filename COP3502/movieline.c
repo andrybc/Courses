@@ -19,18 +19,20 @@ typedef struct customer {
     int arrivalTime;
 } customer;
 
+//struct for holding a customer in a node of linkedlist
 typedef struct CustomerNode {
     customer* customer;
     struct CustomerNode* next;
 } CustomerNode;
 
-
+//struct for the queues nodes will be placed in
 typedef struct CustomerQueue {
     CustomerNode* front;
     CustomerNode* back;
     int size;
 } CustomerQueue;
 
+//add a struct booth to calculate the final line going into respective booth
 typedef struct Booth {
     CustomerQueue* queues[12];
     CustomerQueue* finalLine;
@@ -73,6 +75,7 @@ void enqueue(CustomerQueue* queue, customer* customer) {
     queue->size++;
 }
 
+//function to pop out the node in front and point front to the next node in queue;
 customer* dequeue(CustomerQueue* queue) {
     if(queue->front == NULL) {
         printf("Queue is empty.");
@@ -92,7 +95,7 @@ customer* dequeue(CustomerQueue* queue) {
 
     return customer;
 }
-
+// function to return the first node in the queu without poping it out
 customer* peek(CustomerQueue* queue) {
     if(queue->front != NULL) {
         return queue->front->customer;
@@ -102,6 +105,7 @@ customer* peek(CustomerQueue* queue) {
     }
 }
 
+//function that returns 0 
 int isEmpty(CustomerQueue* queue) {
     return queue->front == NULL;
 }
@@ -155,11 +159,12 @@ void sortCustomersInBooth(Booth* booth) {
         customer* customer = &allCustomersinBooth[i];
         enqueue(booth->finalLine, customer);
     }
-printf("%s\n", booth->finalLine->front->customer->name);
+//printf("%s\n", booth->finalLine->front->customer->name);
     // Free the temporary array
    // free(allCustomersinBooth);
 }
 
+//function to print out the finalLine variable in Booth / used for debugging
 void printFinalLineCustomers(Booth* booth) {
     printf("Final Line in order Customers in Booth:\n");
     printf("%s\n", booth->finalLine->front->customer->name);
@@ -213,7 +218,7 @@ Booth* assignQueuesToBooths(CustomerQueue* movieQueues[], int numBooths, int num
         booths[i].numofCustomer = numofCustomers;
 
         sortCustomersInBooth(&booths[i]);
-        printFinalLineCustomers(&booths[i]);
+       // printFinalLineCustomers(&booths[i]);
     }
 
 
@@ -222,7 +227,7 @@ Booth* assignQueuesToBooths(CustomerQueue* movieQueues[], int numBooths, int num
 }
 
 
-
+// prints out all the queus the booth has to manage/ used for debugging
 void printBoothQueues(Booth* booths, int numBooths) {
     for (int i = 0; i < numBooths; i++) {
         printf("Booth %d: ", i + 1);
@@ -236,6 +241,7 @@ void printBoothQueues(Booth* booths, int numBooths) {
     }
 }
 
+//function to process the custoomers and print out checkout times
 void processCustomers(Booth* booths, int numBooths) {
     for (int i = 0; i < numBooths; i++) {
         printf("Booth %d\n", i + 1);
@@ -243,7 +249,7 @@ void processCustomers(Booth* booths, int numBooths) {
         CustomerQueue* finalLine = booths[i].finalLine;
         int currentCheckoutTime = booths[i].lastCheckoutTime;
 
-        printFinalLineCustomers(&booths[i]);
+      //  printFinalLineCustomers(&booths[i]);
 
 
         while (!isEmpty(finalLine)) {
@@ -270,19 +276,19 @@ void processCustomers(Booth* booths, int numBooths) {
     }
 }
 
-
+//function to free all the memory associated with the Booth struct
 void freeBooths(Booth* booths, int numBooths) {
     for (int i = 0; i < numBooths; i++) {
         for (int j = 0; j < booths[i].numQueues; j++) {
             if (booths[i].queues[j] != NULL) {
-                free(booths[i].queues[j]); // Free the dynamically allocated queue
+                free(booths[i].queues[j]); // free the dynamically allocated queue
             }
         }
         if (booths[i].queueNumbers != NULL) {
-            free(booths[i].queueNumbers); // Free the dynamically allocated queueNumbers array
+            free(booths[i].queueNumbers); // free the dynamically allocated queueNumbers array
         }
     }
-    free(booths); // Free the dynamically allocated array of booths
+    free(booths); 
 }
 
 
@@ -315,6 +321,7 @@ int findSmallestQueue (CustomerQueue* queues[]){
     
 }
 
+//print just the informations who is in a specific queue / used in printAllqueues/ used for debugging
 void printQueue(CustomerQueue* queue) {
     if(isEmpty(queue)) {
         printf("Queue is empty.\n");
@@ -330,6 +337,7 @@ void printQueue(CustomerQueue* queue) {
     printf("\n");
 }
 
+// print all the queues that would have customers/ used for debugging
 void printAllQueues(CustomerQueue* queues[]) {
     for(int i = 0; i < 12; i++) {
         if(!isEmpty(queues[i])) {
@@ -340,6 +348,40 @@ void printAllQueues(CustomerQueue* queues[]) {
     }
 }
 
+//function to free all the memory that was dynamically allocated
+void freeAllMemory(CustomerQueue* queues[], int numQueues, Booth* booths, int numBooths) {
+    // free all customer nodes and queues
+    for (int i = 0; i < numQueues; i++) {
+        while (!isEmpty(queues[i])) {
+            customer* tempCustomer = dequeue(queues[i]);
+            free(tempCustomer);
+        }
+        free(queues[i]);
+    }
+
+    // free all booths and their associated memory
+    for (int i = 0; i < numBooths; i++) {
+        Booth* booth = &booths[i];
+        for (int j = 0; j < booth->numQueues; j++) {
+            if (booth->queues[j] != NULL) {
+                free(booth->queues[j]);
+            }
+        }
+        if (booth->queueNumbers != NULL) {
+            free(booth->queueNumbers);
+        }
+        if (booth->finalLine != NULL) {
+            while (!isEmpty(booth->finalLine)) {
+                customer* tempCustomer = dequeue(booth->finalLine);
+                free(tempCustomer);
+            }
+            free(booth->finalLine);
+        }
+    }
+
+    // Free the booths array
+    free(booths);
+}
 
 
 int main(){
@@ -399,7 +441,7 @@ int main(){
        // printf("%d\n", numQueues);
 
     Booth* booths = assignQueuesToBooths(movieQueues, numBooths, numQueues);
-    printBoothQueues(booths,numBooths);
+   // printBoothQueues(booths,numBooths);
 
     processCustomers(booths, numBooths);
 
@@ -409,21 +451,24 @@ int main(){
     //freeBooths(booths, numBooths);
 
 
-
+ freeAllMemory(movieQueues, 12, booths, numBooths);
 
     // Freeing all dynamically allocated memory
-    for(int i = 0; i < 12; i++) {
+/*     for(int i = 0; i < 12; i++) {
         while(!isEmpty(movieQueues[i])) {
             customer* tempCustomer = dequeue(movieQueues[i]);
             free(tempCustomer);
         }
         free(movieQueues[i]);
     }
+ */
+/*  
+checking to see if memory actually freed
 
- for(int i = 0; i < 12; i++) {
+for(int i = 0; i < 12; i++) {
     printf("%d\n", size(movieQueues[i]));
        
-    }
+    } */
 //printAllQueues(movieQueues);
 
 
