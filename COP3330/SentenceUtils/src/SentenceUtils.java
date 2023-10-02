@@ -34,10 +34,19 @@ class Histogram{
              output: [<"an",2>, <"or",3>]
     */
     public void generateHistogram(ArrayList<String> letterGroups){
+    	
+    	for(int i = 0; i < letterGroups.size(); i++) {
+    		if(this.mHistogram.containsKey(letterGroups.get(i))){
+    			int newValue = this.mHistogram.get(letterGroups.get(i)) + 1;
+    			this.mHistogram.put(letterGroups.get(i), newValue);
+    			
+    		}
+    		else {
+    			this.mHistogram.put(letterGroups.get(i), 1);
+    		}
+    	}
         
-        /*
-            You are going to implement body of this function
-        */
+
     }
     
     /*
@@ -53,9 +62,18 @@ class Histogram{
     
     */
     public void printHistogram(){
-        /*
-            You are going to implement body of this function
-        */
+
+    	for(String i : this.mHistogram.keySet()) {
+    		
+    		System.out.print(i + ": ");
+    		int iteration = this.mHistogram.get(i);
+    		
+    		for(int j = 0; j < iteration; j++) {
+    			System.out.print("*");
+    		}
+    		System.out.print("\n");
+    	}
+    
     }
     
 }
@@ -91,13 +109,11 @@ public class SentenceUtils {
              output: ["object", "oriented"]
     */
     private String[] getTokens(String line){ 
-        /*
-            You are going to implement body of this function
-            
-            
-        */
-    	String[] newword = {"Barry", "Allen"};
-    	return newword;
+      
+    	String[] tokens = line.split("\\s+");
+    	//System.out.println(tokens[0]);
+    	
+    	return tokens;
     }
     
     /*
@@ -112,10 +128,24 @@ public class SentenceUtils {
                   ["obje","bjec", "ject","orie", "rien", "ient", "ente", "nted"]
     */
     private void splitTokenstoLetterGroups(String[] tokens){
+    	
+    	for(String token: tokens) {
+    		if(token.length()< this.mLetterGroupLen) {
+    			continue;
+    		}
+    		
+    		int iterations = token.length()- this.mLetterGroupLen +1;
+    		
+    		for(int i = 0; i < iterations; i++) {
+    			int firstIndex = i;
+    			int lastIndex = i+ this.mLetterGroupLen;
+    			String letterGroup = token.substring(firstIndex, lastIndex);
+    			this.mLetterGroups.add(letterGroup);
+    		}
+     		
+    		
+    	}
  
-        /*
-            You are going to implement body of this function
-        */
     }
     
     /**
@@ -151,14 +181,26 @@ public class SentenceUtils {
 		}
     	
     	String fileContent = "";
+    	SentenceUtils newText = new SentenceUtils(letterGroupLength);
     	
     	while(fileScanner.hasNextLine()) {
     		String fileLine = fileScanner.nextLine();
-    		fileContent += fileLine;
+    		//System.out.println(fileLine);
+    		fileContent += fileLine + " ";
+    		
+    		newText.addWords(fileLine);
+    		
     		
     		
     	}
-        System.out.println("You entered a valid file: " + fileContent);
+    	
+    	
+    	Histogram newHisto = new Histogram();
+    	newHisto.generateHistogram(newText.getLetterGroups());
+    	newHisto.printHistogram();
+    	
+    	System.out.println(newText.getLetterGroups());
+      ///  System.out.println("You entered a valid file: " + fileContent);
 
     	
 
