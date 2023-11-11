@@ -10,13 +10,13 @@ Lab 13
 
 
 */
-#define MAX_STRING_SIZE 19  //defining max size of strings names
+#define MAX_STRING_SIZE 19  //Defining max size of strings names
 
 
 
 
 
-typedef struct attendee {//struct for attendees in a party
+typedef struct attendee {//Struct for attendees in a party
 
     char name[19];
     int boughtPopcorn;

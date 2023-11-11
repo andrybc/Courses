@@ -134,7 +134,7 @@ int main(){
 
     scanf("%d %d", &numAttendees, &restrictions);
     
-    attendee* userGroup = (attendee*)malloc( numAttendees * sizeof(attendee));
+    attendee* userGroup = (attendee*)malloc( numAttendees * sizeof(attendee));//allocating space
 
     for(int i = 0; i < numAttendees; i++){
 
