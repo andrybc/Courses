@@ -1,0 +1,14 @@
+Line OP L M
+0 JMP 0 13
+1 INC 0 6
+2 LOD 0 5
+3 LOD 0 3
+4 OPR 0 1
+5 STO 0 4
+6 SYS 0 3
+Symbol Table:
+Kind    |       Name            |       Value   |       Level   |       Address |       Mark
+------------------------------------------------------------------------------------------------------
+   2    |               call    |       0       |       0       |       3       |       1
+   2    |               else    |       0       |       0       |       4       |       1
+   2    |               procedure       |       0       |       0       |       5       |       1
