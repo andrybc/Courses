@@ -1,0 +1,8 @@
+var x, y;
+procedure a;
+begin
+    x := y * 2;
+end
+begin
+    call a;
+end.

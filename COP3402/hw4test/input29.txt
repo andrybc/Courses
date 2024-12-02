@@ -1,0 +1,6 @@
+const a = 5;
+procedure p; begin end;
+begin
+   a := 10;
+   p := 20;
+end.

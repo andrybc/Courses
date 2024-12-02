@@ -1,3 +1,3 @@
 Make sure all the input files and lex.c are in the same folder
-Then type "gcc parsercodegen.c -o parser" into the console
-Then type "./parser <input file name>"
+Then type "gcc -o hw4compiler hw4compiler.c" into the console
+Then type "./hw4compiler <input file name>"

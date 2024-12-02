@@ -1,0 +1,5 @@
+var x, y;
+begin
+    read ;
+    x := y * 2;
+end.

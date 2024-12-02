@@ -107,7 +107,7 @@ public class Main {
         int count = 0;
         for (int i = 0; i < dist.length; i++) {
             if (dist[i] == L) {
-                System.out.println("1 treasure is in the city "+ (i+1));
+             //  System.out.println("1 treasure is in the city "+ (i+1));
 
                 count++;
             }
@@ -132,15 +132,15 @@ public class Main {
                 countedEdges.add(edgeKey);
 
                 // Check if there is a point on the road from u to v that is exactly L distance from the capital
-                if (dist[u] < L && L < dist[u] + weight && v != capital) {
+                if (dist[u] < L && L < dist[u] + weight ) {
                     int potentialTreasureDist = L - dist[u];
                     String treasureLocationKey = edgeKey + "-" + potentialTreasureDist;
                     int result = isShortestPath(dist, u, v, potentialTreasureDist, L, weight);
                     if (result == 1) {
-                        System.out.println("1 treasure is on the road (" + (u + 1) + ", " + (v + 1) + ") at distance " + potentialTreasureDist + " from city " + (u + 1));
+                      //  System.out.println("1 treasure is on the road (" + (u + 1) + ", " + (v + 1) + ") at distance " + potentialTreasureDist + " from city " + (u + 1));
                         count++;
                     } else if (result == 2) {
-                        System.out.println("1 treasure is on the road (" + (u + 1) + ", " + (v + 1) + ") at distance " + potentialTreasureDist + " from city " + (u + 1));
+                      //  System.out.println("1 treasure is on the road (" + (u + 1) + ", " + (v + 1) + ") at distance " + potentialTreasureDist + " from city " + (u + 1));
                         count++;
                         countedEdges.add(edgeKey); // Mark the edge to avoid double counting
                         continue;
@@ -149,15 +149,15 @@ public class Main {
                 }
               //  if (countedEdges.contains(edgeKey)) continue;
                 // Check if there is a point on the road from v to u that is exactly L distance from the capital
-                if (dist[v] < L && L < dist[v] + weight&& u != capital) {
+                if (dist[v] < L && L < dist[v] + weight) {
                     int potentialTreasureDist = L - dist[v];
                     String treasureLocationKey = edgeKey + "-" + (weight - potentialTreasureDist);
                     int result = isShortestPath(dist, v, u, potentialTreasureDist, L, weight);
                     if (result == 1) {
-                        System.out.println("1 treasure is on the road (" + (v + 1) + ", " + (u + 1) + ") at distance " + potentialTreasureDist + " from city " + (v + 1));
+                       // System.out.println("1 treasure is on the road (" + (v + 1) + ", " + (u + 1) + ") at distance " + potentialTreasureDist + " from city " + (v + 1));
                         count++;
                     } else if (result == 2) {
-                        System.out.println("1 treasure is on the road (" + (v + 1) + ", " + (u + 1) + ") at distance " + potentialTreasureDist + " from city " + (v + 1));
+                     //   System.out.println("1 treasure is on the road (" + (v + 1) + ", " + (u + 1) + ") at distance " + potentialTreasureDist + " from city " + (v + 1));
                         count++;
                         countedEdges.add(edgeKey); // Mark the edge to avoid double counting
                     }
@@ -170,9 +170,9 @@ public class Main {
 
     public static int isShortestPath(int[] dist, int u, int v, int potentialTreasureDist, int L, int weight) {
     	boolean isSameLocationFromBothEnds = (potentialTreasureDist == weight - (L - dist[v]));
-        if ((dist[u] + potentialTreasureDist == L) && (dist[v] + weight - potentialTreasureDist >= L)) {
+        if ((dist[u] + potentialTreasureDist == L) && (dist[v] + weight - potentialTreasureDist >= dist[u] + potentialTreasureDist)) {
             if (isSameLocationFromBothEnds) {
-            	System.out.println("treasure at same location!!");
+            //System.out.println("treasure at same location!!");
                 return 2; // Both ways, same location
             }
             return 1; // Shortest path

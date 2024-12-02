@@ -1,0 +1,4 @@
+var x, y;
+begin
+    if x > 2 do x := y * 2;
+end.

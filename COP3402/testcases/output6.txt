@@ -1,1 +1,1 @@
-Error: only variable values may be altered
+Error: if must be followed by then

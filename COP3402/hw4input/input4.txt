@@ -1,0 +1,17 @@
+var x,y,z,v,w; 
+procedure a; 
+    var x,y,u,v; 
+    begin 
+        z:=2; 
+        u:=z+w; 
+        call a 
+    end;
+procedure b; 
+    var y,z,v; 
+    begin 
+        y:=x+w; 
+        call a
+    end;
+begin 
+    call a 
+end. 

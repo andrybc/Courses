@@ -1,0 +1,19 @@
+const a = 5, b = 6;
+begin
+    write 0;
+    if odd a + b then
+        write 1
+    fi;
+    write 0;
+    if odd a then
+		write 1
+	fi;
+    write 0;
+    if odd b then
+		write 1
+	fi;
+    write 0;
+    if odd (1+(a*b)+(b-a)*(a*b)) then
+        write 1
+    fi
+end.

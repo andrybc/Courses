@@ -1,0 +1,5 @@
+var x, y;
+begin
+    call a;
+    x := y * 2;
+end.
